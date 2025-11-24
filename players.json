@@ -1,0 +1,110 @@
+[
+  {
+    "name": "Maciek",
+    "team": "Promenada",
+    "position": "player",
+    "games": 4,
+    "goals": 11,
+    "assists": 10,
+    "blocks": 8,
+    "saves": 0,
+    "cleansheets": 0,
+    "bonus": 2
+  },
+  {
+    "name": "Mikolaj",
+    "team": "Promenada",
+    "position": "player",
+    "games": 5,
+    "goals": 8,
+    "assists": 6,
+    "blocks": 5,
+    "saves": 0,
+    "cleansheets": 0,
+    "bonus": 1
+  },
+  {
+    "name": "Adrian",
+    "team": "Promenada",
+    "position": "goalkeeper",
+    "games": 3,
+    "goals": 4,
+    "assists": 5,
+    "blocks": 2,
+    "saves": 0,
+    "cleansheets": 0,
+    "bonus": 0
+  },
+  {
+    "name": "Artem",
+    "team": "Trempel",
+    "position": "player",
+    "games": 6,
+    "goals": 7,
+    "assists": 3,
+    "blocks": 4,
+    "saves": 0,
+    "cleansheets": 0,
+    "bonus": 2
+  },
+  {
+    "name": "Anton",
+    "team": "Trempel",
+    "position": "player",
+    "games": 4,
+    "goals": 3,
+    "assists": 2,
+    "blocks": 3,
+    "saves": 0,
+    "cleansheets": 0,
+    "bonus": 0
+  },
+  {
+    "name": "Eugenii",
+    "team": "Trempel",
+    "position": "goalkeeper",
+    "games": 5,
+    "goals": 6,
+    "assists": 7,
+    "blocks": 1,
+    "saves": 0,
+    "cleansheets": 0,
+    "bonus": 1
+  },
+  {
+    "name": "Eduard",
+    "team": "Dworzec Centralny",
+    "position": "player",
+    "games": 6,
+    "goals": 5,
+    "assists": 6,
+    "blocks": 2,
+    "saves": 0,
+    "cleansheets": 1,
+    "bonus": 3
+  },
+  {
+    "name": "Daniil",
+    "team": "Dworzec Centralny",
+    "position": "player",
+    "games": 5,
+    "goals": 4,
+    "assists": 4,
+    "blocks": 3,
+    "saves": 0,
+    "cleansheets": 0,
+    "bonus": 0
+  },
+  {
+    "name": "Oleksii",
+    "team": "Dworzec Centralny",
+    "position": "goalkeeper",
+    "games": 4,
+    "goals": 2,
+    "assists": 3,
+    "blocks": 4,
+    "saves": 0,
+    "cleansheets": 0,
+    "bonus": 1
+  }
+]
