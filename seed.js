@@ -16,19 +16,19 @@ async function seed() {
     let user = await User.findOne({ username: u.username });
 
     if (!user) {
-      // 👶 создаём нового пользователя
+      // 👶 Create a new user
       user = new User({ username: u.username, role: u.role });
       await user.setPassword(u.password);
       await user.save();
-      console.log(`✅ Пользователь ${u.username} создан`);
+      console.log(`✅ User ${u.username} created`);
     } else {
-      // ✏️ если есть, обновляем только роль (пароль оставляем прежним!)
+      // ✏️ If user already exists, update only the role (keep existing password)
       if (user.role !== u.role) {
         user.role = u.role;
         await user.save();
-        console.log(`♻️ Роль пользователя ${u.username} обновлена на ${u.role}`);
+        console.log(`♻️ Role of user ${u.username} updated to ${u.role}`);
       } else {
-        console.log(`ℹ️ Пользователь ${u.username} уже существует (без изменений)`);
+        console.log(`ℹ️ User ${u.username} already exists (no changes)`);
       }
     }
   }

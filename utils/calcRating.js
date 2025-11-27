@@ -1,10 +1,10 @@
 // utils/calcRating.js
 
 export function calcRating(player) {
-  // Если игрок не сыграл ни одного матча, все статистические поля игнорируем
+  // If the player did not play any games, ignore all other stats
   if (!player.games || player.games <= 0) return 0;
 
-  // Приводим все числовые поля к минимуму 0
+  // Normalize all numeric fields to be at least 0
   const games = Math.max(0, player.games || 0);
   const goals = Math.max(0, player.goals || 0);
   const assists = Math.max(0, player.assists || 0);
@@ -19,7 +19,7 @@ export function calcRating(player) {
   const yellowcards = Math.max(0, player.yellowcards || 0);
   const redcards = Math.max(0, player.redcards || 0);
 
-  // Формула рейтинга
+  // Rating formula
   const rating =
     games * 2 +
     goals * 4 +
@@ -35,7 +35,6 @@ export function calcRating(player) {
     yellowcards -
     redcards * 2;
 
-  // Минимум 0
+  // Ensure rating is not negative
   return Math.max(0, Math.round(rating));
 }
-  

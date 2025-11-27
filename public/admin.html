@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin · Players</title>
-  <!-- Bootstrap + FA -->
+
+  <!-- Bootstrap + FontAwesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
   <style>
     body {
       min-height: 100vh;
       background: linear-gradient(135deg, #e8f0fe 0%, #f6f9ff 100%);
-      font-size: 0.875rem; /* compact */
+      font-size: 0.875rem;
     }
     .card {
       border: 0;
@@ -29,23 +31,28 @@
       font-size: 0.8rem;
       padding: 0.15rem 0.25rem;
     }
-    td:nth-child(1) input { min-width: 160px; } /* Name */
-    td:nth-child(2) input { min-width: 140px; } /* Team */
-    td:nth-child(3) select { min-width: 90px; } /* Position */
+
+    /* Column widths */
+    td:nth-child(1) input { min-width: 160px; }
+    td:nth-child(2) input { min-width: 140px; }
+    td:nth-child(3) select { min-width: 90px; }
+
     td:nth-child(n+4):nth-child(-n+13) input {
       max-width: 55px;
     }
+
     .table thead th {
       white-space: nowrap;
       font-size: 0.75rem;
     }
+
     td:nth-child(n+4):nth-child(-n+16) input { max-width: 50px; }
     td input[name="bonus"] { max-width: 40px; }
 
     .actions {
       display: flex;
       justify-content: center;
-      align-items: stretch; /* вместо center */
+      align-items: stretch;
       gap: 4px;
       height: 100%;
     }
@@ -54,11 +61,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0;            /* убираем влияние padding */
+      padding: 0;
       border-radius: 6px;
       height: 42px;
     }
 
+    /* League banner */
     .league-banner {
       font-weight: 700;
       font-size: 1.5rem;
@@ -83,17 +91,18 @@
       transform: translateY(0);
     }
 
-
-
     .thumb { width: 34px; height: 34px; object-fit: cover; border-radius: 6px; }
     .td-thumb { width: 42px; }
   </style>
 </head>
+
 <body class="py-3">
   <div class="container-fluid">
-    <!-- Верхняя панель -->
+
+    <!-- Top panel -->
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h3 class="mb-0">⚙️ Admin · Players</h3>
+
       <div class="d-flex align-items-center gap-3">
         <span class="fw-semibold" id="welcomeAdmin"></span>
         <button id="logoutBtn" class="btn btn-sm btn-outline-secondary">
@@ -102,18 +111,17 @@
       </div>
     </div>
 
-    <div id="adminAlert" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100; pointer-events:none;"></div>
-
+    <div id="adminAlert" class="position-fixed bottom-0 end-0 p-3" style="z-index:1100; pointer-events:none;"></div>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div class="d-flex align-items-center gap-2">
         <button id="createLeagueBtn" class="btn btn-sm btn-primary">
           <i class="fa-solid fa-plus"></i> Create League
         </button>
-        <div id="leagueBanner" class="league-banner" style="display:none;">
-          <!-- сюда будет вставляться название -->
-        </div>
 
+        <div id="leagueBanner" class="league-banner" style="display:none;">
+          <!-- league name will be injected here -->
+        </div>
 
         <select id="leagueSelect" class="form-select form-select-sm" style="width:auto; min-width:200px;">
           <option value="">Choose league...</option>
@@ -121,21 +129,23 @@
       </div>
     </div>
 
-
-
-    <!-- Добавление -->
+    <!-- Add player form -->
     <div class="card mb-3">
       <div class="card-body p-2">
         <form id="addPlayerForm" class="row g-2 align-items-end">
+
           <div id="adminAlert" class="mt-2"></div>
+
           <div class="col-md-2">
             <label class="form-label mb-1">Name</label>
             <input type="text" name="name" class="form-control form-control-sm" required>
           </div>
+
           <div class="col-md-2">
             <label class="form-label mb-1">Team</label>
             <input type="text" name="team" class="form-control form-control-sm">
           </div>
+
           <div class="col-md-1">
             <label class="form-label mb-1">Position</label>
             <select name="position" class="form-select form-select-sm">
@@ -145,19 +155,21 @@
               <option value="MID">MID</option>
               <option value="FW">FW</option>
             </select>
-          </div>          
+          </div>
+
           <div class="col-md-2">
             <label class="form-label mb-1">Image</label>
             <input type="file" name="image" accept="image/*" class="form-control form-control-sm">
           </div>
+
           <div class="col-md-1">
-            <button id="addPlayerBtn">Добавить игрока</button>            
+            <button id="addPlayerBtn">Add Player</button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- Таблица -->
+    <!-- Players table -->
     <div class="card">
       <div class="card-body p-2">
         <div class="table-responsive">
@@ -168,6 +180,7 @@
                 <th>Name</th>
                 <th>Team</th>
                 <th>Position</th>
+
                 <th><i class="fa-solid fa-gamepad"></i></th>
                 <th><i class="fa-solid fa-futbol text-success"></i></th>
                 <th><i class="fa-solid fa-arrow-right-long text-primary"></i></th>
@@ -175,39 +188,46 @@
                 <th><i class="fa-solid fa-hand text-warning"></i></th>
                 <th><i class="fa-solid fa-broom text-info"></i></th>
                 <th><i class="fa-solid fa-futbol" style="color:#dc3545"></i></th>
-                <th>P<sup><i class="fa-solid fa-arrow-trend-up text-success"></i></sup></th>
-                <th>P<sup><i class="fa-solid fa-xmark text-danger"></i></sup></th>
-                <th>P<sup><i class="fa-solid fa-hand-back-fist text-primary"></i></sup></th>
+
+                <th>P↑</th>
+                <th>P×</th>
+                <th>P🖐</th>
+
                 <th><span style="display:inline-block;width:12px;height:18px;background:yellow;border:1px solid #333;"></span></th>
                 <th><span style="display:inline-block;width:12px;height:18px;background:red;border:1px solid #333;"></span></th>
+
                 <th><i class="fa-solid fa-star text-warning"></i></th>
 
                 <th>Rating</th>
                 <th>Actions</th>
               </tr>
             </thead>
+
             <tbody id="playersTbody"></tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- <script src="admin.js"></script> -->
+
+  <!-- Admin script -->
   <script type="module" src="admin.js"></script>
 
   <script>
-    // === Проверка роли ===
+    // === Role check ===
     const role = localStorage.getItem("role");
     const username = localStorage.getItem("username") || "admin";
 
     if (role !== "admin") {
-      window.location.href = "/index.html"; // редирект если не админ
+      window.location.href = "/index.html"; // redirect non-admin users
     }
 
     document.getElementById("welcomeAdmin").textContent = `Welcome, ${username}!`;
 
-    // === Выход ===
+    // === Logout ===
     document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("role");
       localStorage.removeItem("username");
@@ -215,6 +235,8 @@
       window.location.href = "/index.html";
     });
   </script>
+
   <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 2000;"></div>
+
 </body>
 </html>
