@@ -3,13 +3,13 @@
 const API_URL = "http://localhost:4000";
 
 // -------------------------
-// Загрузка игроков
+// Load players
 // -------------------------
 async function loadPlayers(leagueId) {
   let url = `${API_URL}/players`;
   if (leagueId) url += `?leagueId=${leagueId}`;
 
-  console.log("Запрос игроков:", url);
+  console.log("Player request:", url);
 
   const res = await fetch(url);
   const players = await res.json();
@@ -24,8 +24,8 @@ async function loadPlayers(leagueId) {
       <div class="card h-100">
         <div class="card-header">${p.name}</div>
         <div class="card-body">
-          <p><strong>Команда:</strong> ${p.team}</p>
-          <p><strong>Позиция:</strong> ${p.position}</p>
+          <p><strong>Team:</strong> ${p.team}</p>
+          <p><strong>Position:</strong> ${p.position}</p>
         </div>
       </div>`;
     container.appendChild(card);
@@ -33,7 +33,7 @@ async function loadPlayers(leagueId) {
 }
 
 // -------------------------
-// Логин
+// Login handler
 // -------------------------
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -48,64 +48,64 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     });
 
     const data = await res.json();
-    console.log("Ответ сервера:", data);
+    console.log("Server response:", data);
 
     if (!res.ok) {
       document.getElementById("loginMessage").innerText =
-        data.message || "Ошибка входа";
+        data.message || "Login error";
       return;
     }
 
-    // Сохраняем всё в localStorage
+    // Save login data to localStorage
     if (data.token) localStorage.setItem("token", data.token);
     if (data.role) localStorage.setItem("role", data.role);
     if (data.username) localStorage.setItem("username", data.username);
     if (data.userId) {
       localStorage.setItem("userId", data.userId);
-      console.log("✅ userId сохранён:", data.userId);
+      console.log("✅ userId saved:", data.userId);
     }
 
-    // Перенаправление
+    // Redirect based on role
     if (data.role === "admin") {
       window.location.href = "/admin.html";
     } else {
       window.location.href = "/user.html";
     }
   } catch (err) {
-    console.error("Ошибка входа:", err);
+    console.error("Login error:", err);
     document.getElementById("loginMessage").innerText =
-      "Ошибка подключения к серверу";
+      "Server connection error";
   }
 });
 
 // -------------------------
-// Автозагрузка default-лиги
+// Auto-load default league
 // -------------------------
 async function initDefaultLeague() {
   try {
-    console.log("Получаю лигу по умолчанию…");
+    console.log("Fetching default league...");
 
     const res = await fetch(`${API_URL}/leagues/default`);
     const data = await res.json();
 
-    console.log("Лига по умолчанию:", data);
+    console.log("Default league:", data);
 
     if (!data.id) {
-      console.warn("⚠ default-лига не найдена, загружаю всех игроков.");
+      console.warn("⚠ Default league not found, loading all players.");
       await loadPlayers();
       return;
     }
 
-    // Загружаем игроков выбранной лиги
+    // Load players from the default league
     await loadPlayers(data.id);
 
   } catch (err) {
-    console.error("Ошибка загрузки default-лиги:", err);
+    console.error("Error loading default league:", err);
     loadPlayers(); // fallback
   }
 }
 
 // -------------------------
-// Запуск при загрузке страницы
+// Init on page load
 // -------------------------
 initDefaultLeague();

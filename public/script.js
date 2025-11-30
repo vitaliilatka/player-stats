@@ -2,7 +2,7 @@
 
 const DEFAULT_IMG = "https://placehold.co/150x200?text=No%20Image";
 
-// === Переименованная функция ===
+// === Renamed function ===
 async function loadPlayersPublic(leagueId) {
   try {
     const url = leagueId ? `/players?leagueId=${leagueId}` : "/players";
