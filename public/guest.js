@@ -1,6 +1,6 @@
 // guest.js
 
-const API_URL = "http://localhost:4000";
+const API_URL = "https://player-stats-backend.onrender.com/";
 
 // -------------------------
 // Load players

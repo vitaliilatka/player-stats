@@ -1,6 +1,6 @@
 // admin.js
 
-const API_URL = "http://localhost:4000";
+const API_URL = "https://player-stats-backend.onrender.com/";
 let currentLeagueId = null;
 
 document.addEventListener("DOMContentLoaded", () => {

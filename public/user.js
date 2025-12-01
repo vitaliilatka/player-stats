@@ -1,6 +1,6 @@
 // user.js
 
-const API_URL = "http://localhost:4000";
+const API_URL = "https://player-stats-backend.onrender.com/";
 const token = localStorage.getItem("token");
 const role = localStorage.getItem("role");
 
