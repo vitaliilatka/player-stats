@@ -1,6 +1,6 @@
 // guest.js
 
-const API_URL = "https://player-stats-backend.onrender.com/";
+const API_URL = "https://player-stats-backend.onrender.com";
 
 // -------------------------
 // Load players
