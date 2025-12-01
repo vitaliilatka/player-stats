@@ -91,7 +91,8 @@ router.post("/players", authMiddleware(), upload.single("image"), async (req, re
       team,
       position,
       league: leagueId,
-      image: req.file ? `/uploads/${req.file.filename}` : null,
+      image: req.file ? req.file.path : null,  // cloudinary returns URL in path
+
     });
 
     await newPlayer.save();
@@ -127,13 +128,18 @@ router.put("/players/:id", authMiddleware(), upload.single("image"), async (req,
     if (!player) return res.status(404).json({ message: "Player not found" });
 
     // Replace player image if a new one arrives
+
     if (req.file) {
-      if (player.image) {
-        const oldPath = path.join(__dirname, "../", player.image);
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-      }
-      player.image = `/uploads/${req.file.filename}`;
+      player.image = req.file.path;
     }
+
+    // if (req.file) {
+    //   if (player.image) {
+    //     const oldPath = path.join(__dirname, "../", player.image);
+    //     if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    //   }
+    //   player.image = `/uploads/${req.file.filename}`;
+    // }
 
     Object.assign(player, req.body);
     await player.save();
