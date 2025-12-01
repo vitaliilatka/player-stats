@@ -23,7 +23,7 @@ const __dirname = path.dirname(__filename);
 // === Middleware ===
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(express.static(path.join(__dirname, "public"))); // serves index.html and other static files
+// app.use(express.static(path.join(__dirname, "public"))); // serves index.html and other static files
 
 // === Route registration ===
 app.use("/players", playersRouter);
@@ -36,6 +36,9 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
+
+// === Static files (must be LAST) ===
+app.use(express.static(path.join(__dirname, "public")));
 
 // === Start the server ===
 const PORT = process.env.PORT || 4000;
