@@ -84,12 +84,21 @@ function openDetails(p) {
   if (label) label.textContent = `${p.name} — ${p.rating} pts`;
 
   let playerImg = DEFAULT_IMG;
-  if (p.image && typeof p.image === "string") {
+  if (p.image) {
     const v = p.image.trim();
-    if (v.startsWith("data:") || v.startsWith("http://") || v.startsWith("https://") || v.startsWith("/")) {
+    if (v.startsWith("http")) {
       playerImg = v;
+    } else {
+      playerImg = `${API_URL}/${v}`;
     }
   }
+
+  // if (p.image && typeof p.image === "string") {
+  //   const v = p.image.trim();
+  //   if (v.startsWith("data:") || v.startsWith("http://") || v.startsWith("https://") || v.startsWith("/")) {
+  //     playerImg = v;
+  //   }
+  // }
 
   const bodyEl = document.getElementById("playerModalBody");
   if (!bodyEl) {

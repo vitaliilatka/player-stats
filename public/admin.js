@@ -100,7 +100,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       tr.innerHTML = `
         <td class="text-center td-thumb position-relative">
-          <img src="${p.image ? `${API_URL}${p.image}` : "https://via.placeholder.com/40"}"
+          <img src="${p.image 
+            ? (p.image.startsWith("http") 
+                ? p.image 
+                : `${API_URL}/${p.image}`)
+            : 'https://via.placeholder.com/40'}"
+
                class="thumb player-photo" 
                style="cursor:pointer;"
                title="Click to change photo">
