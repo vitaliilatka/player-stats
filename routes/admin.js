@@ -63,55 +63,24 @@ router.post("/leagues", authMiddleware(), async (req, res) => {
 ============================ */
 
 // TEMP TEST: disable file upload to check if upload/cloudinary causes 500
-router.post("/players", authMiddleware(), async (req, res) => {
+// router.post("/players", authMiddleware(), async (req, res) => {
 
-  console.log("HEADERS:", req.headers);
-  console.log("IS MULTIPART:", req.headers["content-type"]);
+//   console.log("HEADERS:", req.headers);
+//   console.log("IS MULTIPART:", req.headers["content-type"]);
 
-  try {
-    console.log("➡️ TEST /admin/players hit");
-    console.log("BODY:", req.body);
-
-    const { name, team, position, leagueId } = req.body;
-
-    if (!name || !team || !position || !leagueId) {
-      return res.status(400).json({ message: "All fields are required (TEMP)" });
-    }
-
-    const existing = await Player.findOne({ name, league: leagueId });
-    if (existing) {
-      return res.status(400).json({ message: "Player already exists (TEMP)" });
-    }
-
-    const newPlayer = new Player({
-      name,
-      team,
-      position,
-      league: leagueId,
-      image: null // no upload to isolate the issue
-    });
-
-    await newPlayer.save();
-    res.status(201).json(newPlayer);
-  } catch (err) {
-    console.error("❌ TEMP player creation error:", err);
-    res.status(500).json({ message: "TEMP: Failed to add player" });
-  }
-});
-
-// router.post("/players", authMiddleware(), upload.single("image"), async (req, res) => {
 //   try {
+//     console.log("➡️ TEST /admin/players hit");
+//     console.log("BODY:", req.body);
+
 //     const { name, team, position, leagueId } = req.body;
 
 //     if (!name || !team || !position || !leagueId) {
-//       return res.status(400).json({ message: "All fields are required" });
+//       return res.status(400).json({ message: "All fields are required (TEMP)" });
 //     }
 
 //     const existing = await Player.findOne({ name, league: leagueId });
 //     if (existing) {
-//       return res
-//         .status(400)
-//         .json({ message: `Player "${name}" already exists in this league` });
+//       return res.status(400).json({ message: "Player already exists (TEMP)" });
 //     }
 
 //     const newPlayer = new Player({
@@ -119,16 +88,50 @@ router.post("/players", authMiddleware(), async (req, res) => {
 //       team,
 //       position,
 //       league: leagueId,
-//       image: req.file ? req.file.path : null,  // Cloudinary URL
+//       image: null // no upload to isolate the issue
 //     });
 
 //     await newPlayer.save();
 //     res.status(201).json(newPlayer);
 //   } catch (err) {
-//     console.error("Player creation error:", err);
-//     res.status(500).json({ message: "Failed to add player" });
+//     console.error("❌ TEMP player creation error:", err);
+//     res.status(500).json({ message: "TEMP: Failed to add player" });
 //   }
 // });
+
+router.post("/players", authMiddleware(), upload.single("image"), async (req, res) => {
+
+  console.log("HEADERS:", req.headers);
+  console.log("IS MULTIPART:", req.headers["content-type"]);
+  try {
+    const { name, team, position, leagueId } = req.body;
+
+    if (!name || !team || !position || !leagueId) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const existing = await Player.findOne({ name, league: leagueId });
+    if (existing) {
+      return res
+        .status(400)
+        .json({ message: `Player "${name}" already exists in this league` });
+    }
+
+    const newPlayer = new Player({
+      name,
+      team,
+      position,
+      league: leagueId,
+      image: req.file ? req.file.path : null,  // Cloudinary URL
+    });
+
+    await newPlayer.save();
+    res.status(201).json(newPlayer);
+  } catch (err) {
+    console.error("Player creation error:", err);
+    res.status(500).json({ message: "Failed to add player" });
+  }
+});
 
 /* ============================
    GET /admin/players/:leagueId
