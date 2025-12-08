@@ -64,6 +64,10 @@ router.post("/leagues", authMiddleware(), async (req, res) => {
 
 // TEMP TEST: disable file upload to check if upload/cloudinary causes 500
 router.post("/players", authMiddleware(), async (req, res) => {
+
+  console.log("HEADERS:", req.headers);
+  console.log("IS MULTIPART:", req.headers["content-type"]);
+
   try {
     console.log("➡️ TEST /admin/players hit");
     console.log("BODY:", req.body);
