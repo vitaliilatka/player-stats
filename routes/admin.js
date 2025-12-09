@@ -27,7 +27,6 @@ router.get("/leagues", authMiddleware(), async (req, res) => {
 
 /* ============================
    POST /admin/leagues
-   Create a new league
 ============================ */
 router.post("/leagues", authMiddleware(), async (req, res) => {
   try {
@@ -59,46 +58,48 @@ router.post("/leagues", authMiddleware(), async (req, res) => {
 
 /* ============================
    POST /admin/players
-   Add a new player with Cloudinary image upload
+   Add a new player + upload image to Cloudinary
 ============================ */
+router.post(
+  "/players",
+  authMiddleware(),
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      const { name, team, position, leagueId } = req.body;
 
-router.post("/players", authMiddleware(), upload.single("image"), async (req, res) => {
+      if (!name || !team || !position || !leagueId) {
+        return res
+          .status(400)
+          .json({ message: "All fields are required to add a player" });
+      }
 
-  console.log("HEADERS:", req.headers);
-  console.log("IS MULTIPART:", req.headers["content-type"]);
-  try {
-    const { name, team, position, leagueId } = req.body;
+      const existing = await Player.findOne({ name, league: leagueId });
+      if (existing) {
+        return res
+          .status(400)
+          .json({ message: `Player "${name}" already exists in this league` });
+      }
 
-    if (!name || !team || !position || !leagueId) {
-      return res.status(400).json({ message: "All fields are required" });
+      const newPlayer = new Player({
+        name,
+        team,
+        position,
+        league: leagueId,
+        image: req.file ? req.file.path : null, // Cloudinary URL
+      });
+
+      await newPlayer.save();
+      res.status(201).json(newPlayer);
+    } catch (err) {
+      console.error("Player creation error:", err);
+      res.status(500).json({ message: "Failed to add player" });
     }
-
-    const existing = await Player.findOne({ name, league: leagueId });
-    if (existing) {
-      return res
-        .status(400)
-        .json({ message: `Player "${name}" already exists in this league` });
-    }
-
-    const newPlayer = new Player({
-      name,
-      team,
-      position,
-      league: leagueId,
-      image: req.file ? req.file.path : null,  // Cloudinary URL
-    });
-
-    await newPlayer.save();
-    res.status(201).json(newPlayer);
-  } catch (err) {
-    console.error("Player creation error:", err);
-    res.status(500).json({ message: "Failed to add player" });
   }
-});
+);
 
 /* ============================
    GET /admin/players/:leagueId
-   Get all players in a league
 ============================ */
 router.get("/players/:leagueId", authMiddleware(), async (req, res) => {
   try {
@@ -112,30 +113,34 @@ router.get("/players/:leagueId", authMiddleware(), async (req, res) => {
 
 /* ============================
    PUT /admin/players/:id
-   Update player info + replace image if uploaded
+   Update player + upload new image
 ============================ */
-router.put("/players/:id", authMiddleware(), upload.single("image"), async (req, res) => {
-  try {
-    const player = await Player.findById(req.params.id);
-    if (!player) return res.status(404).json({ message: "Player not found" });
+router.put(
+  "/players/:id",
+  authMiddleware(),
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      const player = await Player.findById(req.params.id);
+      if (!player) return res.status(404).json({ message: "Player not found" });
 
-    if (req.file) {
-      player.image = req.file.path; // Cloudinary URL
+      if (req.file) {
+        player.image = req.file.path; // Cloudinary URL
+      }
+
+      Object.assign(player, req.body);
+      await player.save();
+
+      res.json(player);
+    } catch (err) {
+      console.error("Player update error:", err);
+      res.status(500).json({ message: "Failed to update player" });
     }
-
-    Object.assign(player, req.body);
-    await player.save();
-
-    res.json(player);
-  } catch (err) {
-    console.error("Player update error:", err);
-    res.status(500).json({ message: "Failed to update player" });
   }
-});
+);
 
 /* ============================
    DELETE /admin/players/:id
-   Remove player (Cloudinary images are kept)
 ============================ */
 router.delete("/players/:id", authMiddleware(), async (req, res) => {
   try {
@@ -154,6 +159,162 @@ router.delete("/players/:id", authMiddleware(), async (req, res) => {
 export default router;
 
 
+// // routes/admin.js
+// import express from "express";
+// import { authMiddleware } from "../middleware/authMiddleware.js";
+// import { upload } from "../utils/uploadConfig.js";
+
+// import League from "../models/League.js";
+// import Player from "../models/Player.js";
+
+// const router = express.Router();
+
+// /* ============================
+//    GET /admin/leagues
+//    Return leagues where user is owner or admin
+// ============================ */
+// router.get("/leagues", authMiddleware(), async (req, res) => {
+//   try {
+//     const leagues = await League.find({
+//       $or: [{ owner: req.user.id }, { admins: req.user.id }],
+//     });
+
+//     res.json(leagues);
+//   } catch (err) {
+//     console.error("League loading error:", err);
+//     res.status(500).json({ message: "Failed to load leagues" });
+//   }
+// });
+
+// /* ============================
+//    POST /admin/leagues
+//    Create a new league
+// ============================ */
+// router.post("/leagues", authMiddleware(), async (req, res) => {
+//   try {
+//     const { name } = req.body;
+
+//     if (!name) {
+//       return res.status(400).json({ message: "League name is required" });
+//     }
+
+//     const existing = await League.findOne({ name });
+//     if (existing) {
+//       return res.status(400).json({ message: "League already exists" });
+//     }
+
+//     const league = new League({
+//       name,
+//       owner: req.user.id,
+//       admins: [req.user.id],
+//       createdAt: new Date(),
+//     });
+
+//     await league.save();
+//     res.json(league);
+//   } catch (err) {
+//     console.error("League creation error:", err);
+//     res.status(500).json({ message: "Server error creating league" });
+//   }
+// });
+
+// /* ============================
+//    POST /admin/players
+//    Add a new player with Cloudinary image upload
+// ============================ */
+
+// router.post("/players", authMiddleware(), upload.single("image"), async (req, res) => {
+
+//   console.log("HEADERS:", req.headers);
+//   console.log("IS MULTIPART:", req.headers["content-type"]);
+//   try {
+//     const { name, team, position, leagueId } = req.body;
+
+//     if (!name || !team || !position || !leagueId) {
+//       return res.status(400).json({ message: "All fields are required" });
+//     }
+
+//     const existing = await Player.findOne({ name, league: leagueId });
+//     if (existing) {
+//       return res
+//         .status(400)
+//         .json({ message: `Player "${name}" already exists in this league` });
+//     }
+
+//     const newPlayer = new Player({
+//       name,
+//       team,
+//       position,
+//       league: leagueId,
+//       image: req.file ? req.file.path : null,  // Cloudinary URL
+//     });
+
+//     await newPlayer.save();
+//     res.status(201).json(newPlayer);
+//   } catch (err) {
+//     console.error("Player creation error:", err);
+//     res.status(500).json({ message: "Failed to add player" });
+//   }
+// });
+
+// /* ============================
+//    GET /admin/players/:leagueId
+//    Get all players in a league
+// ============================ */
+// router.get("/players/:leagueId", authMiddleware(), async (req, res) => {
+//   try {
+//     const players = await Player.find({ league: req.params.leagueId });
+//     res.json(players);
+//   } catch (err) {
+//     console.error("Player loading error:", err);
+//     res.status(500).json({ error: "Failed to load players" });
+//   }
+// });
+
+// /* ============================
+//    PUT /admin/players/:id
+//    Update player info + replace image if uploaded
+// ============================ */
+// router.put("/players/:id", authMiddleware(), upload.single("image"), async (req, res) => {
+//   try {
+//     const player = await Player.findById(req.params.id);
+//     if (!player) return res.status(404).json({ message: "Player not found" });
+
+//     if (req.file) {
+//       player.image = req.file.path; // Cloudinary URL
+//     }
+
+//     Object.assign(player, req.body);
+//     await player.save();
+
+//     res.json(player);
+//   } catch (err) {
+//     console.error("Player update error:", err);
+//     res.status(500).json({ message: "Failed to update player" });
+//   }
+// });
+
+// /* ============================
+//    DELETE /admin/players/:id
+//    Remove player (Cloudinary images are kept)
+// ============================ */
+// router.delete("/players/:id", authMiddleware(), async (req, res) => {
+//   try {
+//     const player = await Player.findById(req.params.id);
+//     if (!player) return res.status(404).json({ message: "Player not found" });
+
+//     await player.deleteOne();
+
+//     res.json({ message: "Player deleted" });
+//   } catch (err) {
+//     console.error("Player deletion error:", err);
+//     res.status(500).json({ message: "Failed to delete player" });
+//   }
+// });
+
+// export default router;
+
+// --------------------------------------------------------------------------------------
 // // routes/admin.js
 // import express from "express";
 // import path from "path";
