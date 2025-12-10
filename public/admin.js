@@ -330,7 +330,13 @@ document.addEventListener("DOMContentLoaded", () => {
       body: formData,
     });
 
-    if (!res.ok) console.error("Player update error");
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Player update error:", text);
+    }
+
+
+    // if (!res.ok) console.error("Player update error");
   }
 
   async function deletePlayer(id) {
@@ -369,10 +375,18 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (!res.ok) {
-        const errData = await res.json();
-        showAlert(errData.message || "Failed to add player", "warning");
+        const text = await res.text();   // <-- НЕ JSON!
+        console.error("Server error response:", text);
+        showAlert("Server error while adding player", "danger");
         return;
       }
+
+
+      // if (!res.ok) {
+      //   const errData = await res.json();
+      //   showAlert(errData.message || "Failed to add player", "warning");
+      //   return;
+      // }
 
       showAlert("Player added successfully!", "success");
 
