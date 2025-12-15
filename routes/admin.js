@@ -2,7 +2,7 @@
 import express from "express";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { upload } from "../utils/uploadConfig.js"; // memoryStorage
-import { v2 as cloudinary } from "cloudinary";
+// import { v2 as cloudinary } from "cloudinary";
 
 import League from "../models/League.js";
 import Player from "../models/Player.js";
@@ -12,19 +12,19 @@ const router = express.Router();
 /* ====================================
    Cloudinary upload helper (buffer)
 ==================================== */
-async function uploadToCloudinary(buffer) {
-  return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload_stream(
-      {
-        folder: "player-photos",
-      },
-      (err, result) => {
-        if (err) reject(err);
-        else resolve(result.secure_url);
-      }
-    ).end(buffer);
-  });
-}
+// async function uploadToCloudinary(buffer) {
+//   return new Promise((resolve, reject) => {
+//     cloudinary.uploader.upload_stream(
+//       {
+//         folder: "player-photos",
+//       },
+//       (err, result) => {
+//         if (err) reject(err);
+//         else resolve(result.secure_url);
+//       }
+//     ).end(buffer);
+//   });
+// }
 
 /* ============================
    GET /admin/leagues
@@ -98,19 +98,19 @@ router.post(
           .json({ message: `Player "${name}" already exists in this league` });
       }
 
-      let imageUrl = null;
+      // let imageUrl = null;
 
-      // 🔥 Upload image if exists
-      if (req.file) {
-        imageUrl = await uploadToCloudinary(req.file.buffer);
-      }
+      // // 🔥 Upload image if exists
+      // if (req.file) {
+      //   imageUrl = await uploadToCloudinary(req.file.buffer);
+      // }
 
       const newPlayer = new Player({
         name,
         team,
         position,
         league: leagueId,
-        image: imageUrl,
+        image: req.file ? req.file.path : null, // ✅ Cloudinary URL
       });
 
       await newPlayer.save();
@@ -142,7 +142,7 @@ router.get("/players/:leagueId", authMiddleware(), async (req, res) => {
 router.put(
   "/players/:id",
   authMiddleware(),
-  upload.single("image"), // MEMORY STORAGE
+  upload.single("image"), 
   async (req, res) => {
     try {
       const player = await Player.findById(req.params.id);
@@ -152,7 +152,7 @@ router.put(
 
       // 🔥 Update image if uploaded
       if (req.file) {
-        player.image = await uploadToCloudinary(req.file.buffer);
+        player.image = req.file.path; // ✅ Cloudinary URL
       }
 
       // Merge the rest of body fields
