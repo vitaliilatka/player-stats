@@ -1,11 +1,6 @@
-// document.addEventListener("DOMContentLoaded", () => loadPlayersPublic());
-
-const DEFAULT_IMG = "https://placehold.co/150x200?text=No%20Image";
-
 // === Renamed function ===
 async function loadPlayersPublic(leagueId) {
   try {
-    // const url = leagueId ? `/players?leagueId=${leagueId}` : "/players";
     const url = leagueId
       ? `${API_URL}/players?leagueId=${leagueId}`
       : `${API_URL}/players`;
