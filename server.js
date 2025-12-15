@@ -3,6 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import path from "path";
+import cors from "cors";
 import { fileURLToPath } from "url";
 
 import playersRouter from "./routes/players.js";
@@ -15,6 +16,15 @@ dotenv.config();
 
 // === Initialize Express application ===
 const app = express();
+
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "https://playersstats.netlify.app"
+  ],
+  credentials: true
+}));
 
 // === Emulate __dirname in ES Modules ===
 const __filename = fileURLToPath(import.meta.url);
