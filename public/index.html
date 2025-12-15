@@ -185,6 +185,11 @@
   </div>
 
   <script>
+    const API_URL = "https://player-stats-backend.onrender.com";
+  </script>
+
+
+  <script>
     const role = localStorage.getItem("role");
     if (role === "admin") {
       window.location.href = "/admin.html";
@@ -226,7 +231,8 @@
       console.log("➡️ showDefaultLeagueBanner called");
 
       try {
-        const res = await fetch("/leagues/default");
+        const res = await fetch(`${API_URL}/leagues/default`);
+
         if (!res.ok) throw new Error("Failed to load default league");
         const data = await res.json();
 
@@ -244,7 +250,8 @@
 
     async function loadPlayers(leagueId) {
       try {
-        const res = await fetch(`/players?leagueId=${leagueId}`);
+        const res = await fetch(`${API_URL}/players?leagueId=${leagueId}`);
+
         if (!res.ok) throw new Error("Failed to load players");
         const players = await res.json();
 
