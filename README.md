@@ -90,9 +90,4 @@ CLOUDINARY_API_SECRET=your_api_secret
 
 DEFAULT_LEAGUE_ID=your_default_league_id
 
----
-
-
-
-## 📂 Project Structure
 
