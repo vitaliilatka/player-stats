@@ -20,6 +20,7 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:3000",
+    "http://localhost:4000",
     "http://localhost:5173",
     "https://playersstats.netlify.app"
   ],
@@ -51,7 +52,7 @@ mongoose
 app.use(express.static(path.join(__dirname, "public")));
 
 // === Start the server ===
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
   console.log(`🚀 Server running on http://localhost:${PORT}`)
 );
