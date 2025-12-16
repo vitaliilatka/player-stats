@@ -207,7 +207,8 @@
       const password = form.password.value.trim();
 
       try {
-        const res = await fetch("/auth/login", {
+        const API_URL = "https://player-stats-backend.onrender.com";
+        const res = await fetch(`${API_URL}/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password }),
